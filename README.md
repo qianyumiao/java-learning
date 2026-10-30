@@ -1,6 +1,7 @@
 # Java 学习记录
 
-> 2026 年秋，从零开始学 Java 的练习代码。
+> 2026 年秋，从零开始学 Java 的练习代码，分两段：
+> 9 月底到 10 月中是手写的单文件练习（`basics/`、`oop/`），10 月中之后换成 IntelliJ 多模块工程（`javastudy/`）。
 > 这个仓库不只放"对的答案"，也保留了当时**写错、编译不过、跑起来才炸**的版本。
 
 ## 为什么保留错误版本
@@ -16,7 +17,7 @@
 
 ```
 java-learning/
-├── basics/                          语法与控制结构
+├── basics/                          ① 语法与控制结构
 │   ├── 01-loop/Test07.java          三种循环 + continue/break
 │   ├── 02-exhaustive/Test11.java    穷举法解方程、百钱买百鸡
 │   ├── 03-grade-switch/             成绩等级：switch 的层层踩坑
@@ -26,14 +27,21 @@ java-learning/
 │   │   ├── v1/                      返回值与不可达代码
 │   │   └── v2/                      两数交换：基本类型 vs 数组
 │   └── 05-array/                    数组工具类 Arrays
-└── oop/                             面向对象
-    ├── 01-student/                  封装、getter/setter 校验
-    │   ├── v1/                      第一版（构造器调用顺序有问题）
-    │   └── v2/                      修正版
-    ├── 02-pizza/                    继承、多态、简单工厂
-    │   ├── before/                  把菜单编号当披萨名，直接 NPE
-    │   └── after/                   解析编号 + 单一 Scanner + 空值检查
-    └── 03-inner-class/              成员内部类、静态嵌套类、局部类
+├── oop/                             ① 面向对象（手写单文件）
+│   ├── 01-student/                  封装、getter/setter 校验
+│   │   ├── v1/                      第一版（构造器调用顺序有问题）
+│   │   └── v2/                      修正版
+│   ├── 02-pizza/                    继承、多态、简单工厂
+│   │   ├── before/                  把菜单编号当披萨名，直接 NPE
+│   │   └── after/                   解析编号 + 单一 Scanner + 空值检查
+│   └── 03-inner-class/              成员内部类、静态嵌套类、局部类
+└── javastudy/Test01/                ② IntelliJ 多模块工程（可直接用 IDEA 打开）
+    ├── Test01.iml                   工程根模块
+    ├── .idea/                       只保留 modules / encodings / misc 三个配置
+    ├── Test/                        Date、Calendar、手写 LinkedList、披萨店
+    ├── TestCommonClass/             集合框架、泛型、比较器、String、包
+    ├── TestException/               自定义异常
+    └── TestOOP01 … TestOOP05/       封装 → 继承 → 接口 → 多态 → 抽象类/内部类
 ```
 
 ## 时间线
@@ -49,6 +57,15 @@ java-learning/
 | 10-09 | 封装、构造器、setter 里做校验 | `oop/01-student` |
 | 10-14 | 内部类：成员 / 静态 / 局部 | `oop/03-inner-class` |
 | 10-15 | 继承、多态、工厂方法 | `oop/02-pizza` |
+| 10-17 | 换用 IntelliJ，开始多模块练习 | `javastudy/Test01/TestOOP01` |
+| 10-19 | 异常、自定义异常、`Date` / `Calendar` | `TestException`、`Test` |
+| 10-21 | `String` / `StringBuilder` | `TestCommonClass/testString` |
+| 10-24 | `List`、`LinkedList`、泛型 | `TestCommonClass/testcollection*` |
+| 10-27 | `Set`、`TreeSet`、`Comparable` | `TestCommonClass/testcollection03` |
+| 10-28 | 外部比较器 `Comparator`、内部比较器对比 | `testinnercompare` / `testoutercompare` |
+| 10-29 | `Map`、`HashMap`、`TreeMap`、多字段排序 | `TestCommonClass/testcollection04` |
+
+（第二阶段日期取自文件修改时间，`javastudy/` 里的模块名是当时按顺序起的，不代表主题。）
 
 ## 几个印象最深的练习
 
@@ -106,6 +123,28 @@ Cannot invoke "com.qianyu.testpizza.Pizza.showPizza()" because "<local3>" is nul
 
 `oop/03-inner-class` 里 `TestClass` 同时有成员内部类 `A`、静态嵌套类 `B`、以及方法体里的局部类 `a`。局部类只能以 `Comparable` 这种父类型"逃"出方法，想调它自己的 `c()` 只能反射。`Main.java` 把三种写法和 `this` 的三层指向（局部变量 → 内部类字段 → 外部类字段）都跑了一遍。
 
+## 第二阶段：IntelliJ 多模块工程
+
+10 月中换成 IDEA 之后，练习按模块分开，一个模块一个主题。`javastudy/Test01` 是**原样的 IDEA 工程**——`*.iml` 和 `.idea/modules.xml` 都提交了，里面的路径全是 `$MODULE_DIR$` 相对路径，clone 下来直接 `File → Open` 就能用，8 个模块都能跑。
+
+| 模块 | 主题 | 主要内容 |
+|---|---|---|
+| `TestOOP01` | 包与访问权限 | 同一个 `Person` 在 `com.qianyu`、`qianyu2`、`qianyu4` 里各写一份，看 `public` / 默认 / `private` 的实际差别 |
+| `TestOOP02` | 继承 | `Student extends Person`，构造器与 `super` |
+| `TestOOP03` | 封装 | `Phone` 属性私有化 + 校验 |
+| `TestOOP04` | 多态 | 餐厅点单（`Restaurant` / `Menu` / `Guest`）、`Boy` / `Girl` / `Mom` |
+| `TestOOP05` | 接口 / 抽象类 / 内部类 | `Interface01` + `Animals` / `Cat` / `Dog` / `PetStore`；抽象类 `Person`；成员内部类 `TestOuter` |
+| `TestException` | 异常 | 默认包里的 `TestException`；`TestException02` 里带自定义异常的 `Person` / `Student` |
+| `Test` | 常用类 | `Date` / `SimpleDateFormat` / `Calendar`；手写 `MyLinkedlist` + `Node`；披萨店重写一遍 |
+| `TestCommonClass` | 集合框架 | `List` / `LinkedList` / `Set` / `TreeSet` / `Map` / `HashMap` / `TreeMap`、泛型、`Comparable` vs `Comparator`、`String` / `StringBuilder`、包 |
+
+这 8 个模块**全部实测编译通过**（`javac -encoding UTF-8`，JDK 25）。和第一阶段那些"故意留着报错"的文件不同，这一批是能跑的。
+
+两个值得说的点：
+
+- `testinnercompare` 与 `testoutercompare` 是同一个 `Student` 的两种排序写法。前者 `implements Comparable<Student>` 把规则焊在类里，只此一种；后者拆成 `BiJiaoAge` / `BiJiaoHeight` / `BiJiaoName` 三个 `Comparator`，`TreeMap`、`TreeSet` 都能吃。需求一改就能看出差别——加一种排序不用动 `Student`。
+- `TestCommonClass/testcollection03/Student.java` 里两种比较方式同时存在，`TreeSet<Student>` 用自定义比较器排序；而 `Test` 模块里干脆手写了 `MyLinkedlist`（`Node` + 指针），用来对照 `java.util.LinkedList` 内部到底在做什么。
+
 ## 踩坑记录（实测）
 
 | 现象 | 原因 | 修法 |
@@ -124,7 +163,7 @@ Cannot invoke "com.qianyu.testpizza.Pizza.showPizza()" because "<local3>" is nul
 
 ## 怎么运行
 
-需要 JDK（这批代码在 JDK 25 上验证过）。没有构建工具，`javac` + `java` 就够。
+需要 JDK（全部代码在 JDK 25 上验证过）。没有构建工具，`javac` + `java` 就够；`javastudy/` 那部分也可以直接用 IDEA 打开。
 
 **默认包里的单个文件**（`basics/` 下大多是这种）：
 
@@ -143,6 +182,16 @@ javac -encoding UTF-8 -d out $(find . -name "*.java")     # Windows PowerShell �
 java -cp out com.qianyu.testpizza.Test
 ```
 
+**`javastudy/` 的模块**，一个模块一个来源根，编译时要带上该模块 `src` 下的全部文件：
+
+```bash
+cd javastudy/Test01/TestCommonClass
+javac -encoding UTF-8 -d out $(find src -name "*.java")
+java -cp out com.qianyu.testcollection04.TestMap
+```
+
+用 IDEA 的话更省事：`File → Open` 选 `java-learning/javastudy/Test01`，等它建立索引，各模块的 `src` 已经配好，右键任意带 `main` 的类直接 Run。
+
 `-encoding UTF-8` 不能省，源码里有中文，Windows 默认编码不是 UTF-8 时会乱码或编译报错。
 
 注意 `before/` 里的文件是**故意留着编译不过的**，想跑请用 `after/`。
@@ -151,7 +200,8 @@ java -cp out com.qianyu.testpizza.Test
 
 - 代码是学习过程中的原样记录，风格不统一，注释有口语，属于正常现象。
 - `04-method/v1` 和 `v2` 里都有 `Test12` 类，是同一道题的两次迭代，请**分开编译**，不要一次性 `javac` 整个 `basics/`。
-- 仓库只收源码，`out/`、`*.class`、IDE 配置都在 `.gitignore` 里。
+- `javastudy/Test01` 的 8 个模块里也有同名类（`com.qianyu.test1.Student` 在好几个模块出现），原因同上：**一个模块一次编译**，别把 `javastudy/` 整个丢给 `javac`。
+- `out/`、`*.class`、`.idea/workspace.xml` 这类东西都在 `.gitignore` 里，不会进仓库；`.iml` 和 `.idea/{modules,encodings,misc}.xml` 是有意提交的，为了让工程 clone 下来就能打开。
 
 ## License
 

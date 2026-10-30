@@ -6,8 +6,16 @@ target/
 *.jar
 
 # IDE
-.idea/
-*.iml
+# javastudy/ 里的 *.iml 和 .idea/{modules,encodings,misc}.xml 是要提交的工程描述，
+# 这里只忽略纯个人的东西
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/tasks.xml
+.idea/httpRequests/
+.idea/shelf/
+.idea/dictionaries/
+*.iws
+*.ipr
 .vscode/
 *.code-workspace
 .settings/
