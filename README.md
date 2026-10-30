@@ -1,7 +1,7 @@
 # Java 学习记录
 
-> 2026 年秋，从零开始学 Java 的练习代码，分两段：
-> 9 月底到 10 月中是手写的单文件练习（`basics/`、`oop/`），10 月中之后换成 IntelliJ 多模块工程（`javastudy/`）。
+> 2026 年秋，从零开始学 Java 的练习代码，按工具分三段：
+> `notepad/` 是 9 月 22 日到 10 月 5 日在 Notepad++ 里一个文件一个文件敲出来的；`basics/`、`oop/` 是之后按专题梳理的单文件练习；10 月中换成 IntelliJ，成了 `javastudy/` 里的多模块工程。
 > 这个仓库不只放"对的答案"，也保留了当时**写错、编译不过、跑起来才炸**的版本。
 
 ## 为什么保留错误版本
@@ -17,7 +17,13 @@
 
 ```
 java-learning/
-├── basics/                          ① 语法与控制结构
+├── notepad/                         ⓪ 最早的一批，Notepad++ 手敲（09-22 – 10-05）
+│   ├── 01-start/                    第一个程序、变量与运算符
+│   ├── 02-branch/                   if/else、switch 成绩等级
+│   ├── 03-loop/                     循环、图形打印、穷举
+│   ├── 04-method/                   方法、重载、可变参数
+│   └── 05-array/                    数组、Arrays、二维数组
+├── basics/                          ① 梳理后的语法专题
 │   ├── 01-loop/Test07.java          三种循环 + continue/break
 │   ├── 02-exhaustive/Test11.java    穷举法解方程、百钱买百鸡
 │   ├── 03-grade-switch/             成绩等级：switch 的层层踩坑
@@ -48,6 +54,11 @@ java-learning/
 
 | 日期 | 主题 | 目录 |
 |---|---|---|
+| 09-22 – 09-24 | 第一个程序、`char` 参与运算、`if/else` | `notepad/01-start`、`02-branch` |
+| 09-26 – 09-27 | `switch` 成绩等级、三种循环对比 | `notepad/02-branch`、`03-loop` |
+| 09-28 – 09-30 | `continue` / `break` 标号、乘法表、图形打印、穷举 | `notepad/03-loop` |
+| 10-02 – 10-03 | 方法、重载、随机数综合练习 | `notepad/04-method` |
+| 10-04 – 10-05 | `args` / 可变参数、数组增删查、`Arrays`、二维数组 | `notepad/04-method`、`05-array` |
 | 09-27 | `for` / `while` / `do-while`，`switch` 分支 | `basics/03-grade-switch` |
 | 09-28 | 循环控制 `continue`、累加与累乘 | `basics/01-loop` |
 | 09-30 | 穷举法：二元一次方程、百钱买百鸡 | `basics/02-exhaustive` |
@@ -65,9 +76,45 @@ java-learning/
 | 10-28 | 外部比较器 `Comparator`、内部比较器对比 | `testinnercompare` / `testoutercompare` |
 | 10-29 | `Map`、`HashMap`、`TreeMap`、多字段排序 | `TestCommonClass/testcollection04` |
 
-（第二阶段日期取自文件修改时间，`javastudy/` 里的模块名是当时按顺序起的，不代表主题。）
+（日期取自文件修改时间；第零、第一阶段当时没有版本控制，日期是文件本身的，整理目录没动内容。）
 
-## 几个印象最深的练习
+## 第零阶段：Notepad++ 里手敲的第一批
+
+`notepad/` 是这批代码的**原始出处**：文件直接放在 Notepad++ 的安装目录里（`notepad++.exe` 旁边），一个练习一个 `.java`，靠命令行 `javac` + `java` 运行。文件名 `Test01`…`Test20` 就是当时的编写顺序，没按主题改过——所以这里只按主题分了文件夹，**文件名原样保留**（`public class` 和文件名绑死，改名等于改代码）。
+
+24 个文件逐个编译过：22 个能过，2 个过不去，见下。
+
+| 文件夹 | 文件 | 主要内容 |
+|---|---|---|
+| `01-start` | `HelloWorld` `HiWorld1` `Test03` `Test04` `TestG1` | 第一个能跑的程序；`char` 当整数用；`float` 与 `double` 精度比较；`++a` 前置自增 |
+| `02-branch` | `Test01` `Test02` `Test02Fixed` `Test05` | `if/else`、嵌套 `if`、`switch` 成绩等级 |
+| `03-loop` | `Test06` – `Test11` | 三种循环求 0~100 的和、`continue`/`break` 与标号、每行输出 6 个、乘法表、长方形 / 菱形 / 空心菱形、穷举法 |
+| `04-method` | `Test12` `Test13` `Test14` `Test17` `Test18` | 方法与重载、随机数 + 分支综合、`args`、可变参数 |
+| `05-array` | `Test15` `Test16` `Test19` `Test20` | 成绩录入统计、数组增删查、`Arrays` 工具类、二维数组 |
+
+**两个编译不过的文件，正好踩中两个经典错误：**
+
+- `Test02Fixed.java` —— 文件名是 `Test02Fixed`，里面写的却是 `public class Test02`。当时以为"另存为、改个名就算修好了"，javac 直接拒绝：
+
+  ```
+  Test02Fixed.java:3: 错误: 类 Test02 是公共的, 应在名为 Test02.java 的文件中声明
+  ```
+
+  Java 里 `public class` 的名字必须和文件名一致，这条躲不掉。
+
+- `Test12.java` —— `changeNum` 声明了 `int` 返回值，方法体里却没有 `return`：
+
+  ```
+  Test12.java:31: 错误: 缺少返回语句
+  ```
+
+  这版连 `return` 都没写，说明当时已经意识到"值传不进去"，只是还没想明白怎么改——后来才换成传数组。
+
+**还有一个能编译、但结果不对的：** `02-branch/Test05.java` 的及格判断写成 `num2 <= 6`，而 `60 / 10 = 6` 也满足，于是 60 分被打印成"请重新考试"。边界条件差一个等号，编译器不会提醒你。
+
+再对照 `03-loop/Test07.java`：同样是把 `int` 一路累乘，这版把循环上限从 100 改成 20，于是没出现负数溢出——但这是**把坑绕开，不是修好**，换成 `long` 或 `BigInteger` 才算解决。
+
+## 第一阶段：梳理出来的几个重点
 
 ### 成绩等级：一个 `switch` 改了四版
 
@@ -157,6 +204,8 @@ Cannot invoke "com.qianyu.testpizza.Pizza.showPizza()" because "<local3>" is nul
 | 方法里交换了两个数，`main` 里没变 | 基本类型是值传递 | 传数组/对象，或把结果 `return` 回去 |
 | 累乘结果是负数 | `int` 溢出（奇数的阶乘增长极快） | 用 `long`/`BigInteger`，或只累加到合理范围 |
 | `找不到 main 方法` | `static void main` 少了 `public` | 补上 `public`（JDK 25 起放宽了这条，旧版 JDK 会报错） |
+| `类 Test02 是公共的, 应在名为 Test02.java 的文件中声明` | 文件名和 `public class` 的名字不一致 | 改文件名或改类名，两者必须相同 |
+| 60 分被判成"请重新考试" | 及格线写成 `num2 <= 6`，`60 / 10 = 6` 也满足 | 改成 `< 6`（边界差一个等号） |
 | 目录 `Test1` 但 `package com.qianyu.test1` | 包名大小写和目录名不一致 | 统一成小写 `test1` |
 
 最后一条来自 `oop/01-student/v1`：当时文件夹写成 `Test1`，包声明却是 `test1`。Windows 不区分大小写所以能编译，换到 Linux 上就找不到了。
@@ -165,7 +214,7 @@ Cannot invoke "com.qianyu.testpizza.Pizza.showPizza()" because "<local3>" is nul
 
 需要 JDK（全部代码在 JDK 25 上验证过）。没有构建工具，`javac` + `java` 就够；`javastudy/` 那部分也可以直接用 IDEA 打开。
 
-**默认包里的单个文件**（`basics/` 下大多是这种）：
+**默认包里的单个文件**（`notepad/` 和 `basics/` 下大多是这种）：
 
 ```bash
 cd basics/01-loop
@@ -199,6 +248,7 @@ java -cp out com.qianyu.testcollection04.TestMap
 ## 说明
 
 - 代码是学习过程中的原样记录，风格不统一，注释有口语，属于正常现象。
+- `notepad/` 和 `basics/` 里有同名文件（`Test05`、`Test07`、`Test11`、`Test12`、`Test19`），但**不是同一份**：Notepad++ 里是最初的版本，`basics/` 里是后来重新梳理或修改过的（比如 `Test05` 在 Notepad++ 里已经能编译，`basics/` 里反而是更早那次报错的；`Test19` 一个用 `println{...}` 一个用 `println(...)`）。两边都保留，正好能看出改动轨迹。
 - `04-method/v1` 和 `v2` 里都有 `Test12` 类，是同一道题的两次迭代，请**分开编译**，不要一次性 `javac` 整个 `basics/`。
 - `javastudy/Test01` 的 8 个模块里也有同名类（`com.qianyu.test1.Student` 在好几个模块出现），原因同上：**一个模块一次编译**，别把 `javastudy/` 整个丢给 `javac`。
 - `out/`、`*.class`、`.idea/workspace.xml` 这类东西都在 `.gitignore` 里，不会进仓库；`.iml` 和 `.idea/{modules,encodings,misc}.xml` 是有意提交的，为了让工程 clone 下来就能打开。
