@@ -45,10 +45,10 @@ public class TestJiNi {
             //每个有钱的人开始给钱
             for (int j = 0; j < people; j++) {
                 if (hasmoney[j]){
-                    int other = num.nextInt(people);
+                    int other;
                     do{
                         other = num.nextInt(people);
-                    }while (other == i);
+                    }while (other == j);
                     wealth[j]--;
                     wealth[other]++;
                 }
