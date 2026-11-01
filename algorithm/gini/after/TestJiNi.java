@@ -71,7 +71,7 @@ public class TestJiNi {
         System.out.println("基尼系数为："+jini);
     }
 
-    //基尼系数的计算方法：（美国人所拥有的钱与其他所有人的钱的差的绝对值之和）÷（2×总钱数×人数）
+    //基尼系数的计算方法：（每个人所拥有的钱与其他所有人的钱的差的绝对值之和）÷（2×总钱数×人数）
     public static double CountJiNi(int[] wealth){
         double sumOfDifference = 0;
         double sumOfMoney = 0;
