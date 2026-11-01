@@ -1,7 +1,7 @@
 # Java 学习记录
 
-> 2026 年秋，从零开始学 Java 的练习代码，按工具分三段：
-> `notepad/` 是 9 月 22 日到 10 月 5 日在 Notepad++ 里一个文件一个文件敲出来的；`basics/`、`oop/` 是之后按专题梳理的单文件练习；10 月中换成 IntelliJ，成了 `javastudy/` 里的多模块工程。
+> 2026 年秋，从零开始学 Java 的练习代码，按工具分四段：
+> `notepad/` 是 9 月 22 日到 10 月 5 日在 Notepad++ 里一个文件一个文件敲出来的；`basics/`、`oop/` 是之后按专题梳理的单文件练习；10 月中换成 IntelliJ，成了 `javastudy/` 里的多模块工程；11 月起另开 `algorithm/` 放单独的算法练习。
 > 这个仓库不只放"对的答案"，也保留了当时**写错、编译不过、跑起来才炸**的版本。
 
 ## 为什么保留错误版本
@@ -41,13 +41,17 @@ java-learning/
 │   │   ├── before/                  把菜单编号当披萨名，直接 NPE
 │   │   └── after/                   解析编号 + 单一 Scanner + 空值检查
 │   └── 03-inner-class/              成员内部类、静态嵌套类、局部类
-└── javastudy/Test01/                ② IntelliJ 多模块工程（可直接用 IDEA 打开）
-    ├── Test01.iml                   工程根模块
-    ├── .idea/                       只保留 modules / encodings / misc 三个配置
-    ├── Test/                        Date、Calendar、手写 LinkedList、披萨店
-    ├── TestCommonClass/             集合框架、泛型、比较器、String、包
-    ├── TestException/               自定义异常
-    └── TestOOP01 … TestOOP05/       封装 → 继承 → 接口 → 多态 → 抽象类/内部类
+├── javastudy/Test01/                ② IntelliJ 多模块工程（可直接用 IDEA 打开）
+│   ├── Test01.iml                   工程根模块
+│   ├── .idea/                       只保留 modules / encodings / misc 三个配置
+│   ├── Test/                        Date、Calendar、手写 LinkedList、披萨店
+│   ├── TestCommonClass/             集合框架、泛型、比较器、String、包
+│   ├── TestException/               自定义异常
+│   └── TestOOP01 … TestOOP05/       封装 → 继承 → 接口 → 多态 → 抽象类/内部类
+└── algorithm/                       ③ 算法练习（11 月起）
+    └── gini/                        用随机转移模型模拟财富分布，算基尼系数
+        ├── before/                  分子没取绝对值，基尼系数恒为 0
+        └── after/                   加上 Math.abs 之后
 ```
 
 ## 时间线
@@ -75,6 +79,7 @@ java-learning/
 | 10-27 | `Set`、`TreeSet`、`Comparable` | `TestCommonClass/testcollection03` |
 | 10-28 | 外部比较器 `Comparator`、内部比较器对比 | `testinnercompare` / `testoutercompare` |
 | 10-29 | `Map`、`HashMap`、`TreeMap`、多字段排序 | `TestCommonClass/testcollection04` |
+| 11-01 | 随机转移模型模拟财富分配、基尼系数 | `algorithm/gini` |
 
 （日期取自文件修改时间；第零、第一阶段当时没有版本控制，日期是文件本身的，整理目录没动内容。）
 
@@ -192,6 +197,45 @@ Cannot invoke "com.qianyu.testpizza.Pizza.showPizza()" because "<local3>" is nul
 - `testinnercompare` 与 `testoutercompare` 是同一个 `Student` 的两种排序写法。前者 `implements Comparable<Student>` 把规则焊在类里，只此一种；后者拆成 `BiJiaoAge` / `BiJiaoHeight` / `BiJiaoName` 三个 `Comparator`，`TreeMap`、`TreeSet` 都能吃。需求一改就能看出差别——加一种排序不用动 `Student`。
 - `TestCommonClass/testcollection03/Student.java` 里两种比较方式同时存在，`TreeSet<Student>` 用自定义比较器排序；而 `Test` 模块里干脆手写了 `MyLinkedlist`（`Node` + 指针），用来对照 `java.util.LinkedList` 内部到底在做什么。
 
+## 第三阶段：算法（11 月起）
+
+`algorithm/` 是 11 月新开的分类，放那些"写起来不难、但结果对不对很难一眼看出来"的练习。目前只有一个：基尼系数。
+
+### 基尼系数：为什么算出来永远是 0
+
+题目是在模拟财富分配：100 个人，每人开始 100 元，每轮每个有钱的人都随机把 1 元给另一个随机的人，没钱的人这一轮可以不掏；跑很多很多轮之后，财富会变均匀吗？
+
+`before/` 里的版本跑完，打印出来的名单一眼就知道很不均（最小 48、最大 182），紧接着输出的基尼系数却是 `0.0`。问题在 `CountJiNi`：
+
+```java
+sum += wealth[i] - wealth[j];   // i、j 都遍历整个数组，也没取绝对值
+```
+
+`i`、`j` 取遍全体，`(x_i - x_j)` 和 `(x_j - x_i)` 必然成对出现，正负严格抵消：
+
+```
+ΣΣ(x_i − x_j) = n·Σx − n·Σx = 0
+```
+
+所以不管财富多不均，`sum` 恒为 0。再加上前面已经 `Arrays.sort` 升序排过，`i > j` 时是负数、`i < j` 时是正数，光看代码不容易发现。改成 `Math.abs(wealth[i] - wealth[j])` 就对了——分母 `2 × 人数 × 总钱数` 本来就是对的，只差这处绝对值。
+
+`after/` 还顺手做了几件事：`double[]` 换成 `int[]`（钱本来就是整数）、把 `Random` 提到循环外（原来每次转账都 `new Random()`）、`nextInt(100)` 改成 `nextInt(people)`（写死 100 的话人数一改就越界）、以及用单独一个循环先把"这一轮谁有钱"判定完再统一发钱，避免一轮里靠后的号还没轮到自己就先收了钱、被遍历顺序带偏。
+
+实测（100 人各 100 元，总财富恒为 10000）：
+
+| 轮数 | 基尼系数 |
+|---|---|
+| 100 | 0.05 |
+| 1,000 | 0.17 ~ 0.19 |
+| 10,000 | 0.37 |
+| 100,000 | 0.44 ~ 0.54 |
+| 1,000,000 | 0.48 ~ 0.49 |
+| 10,000,000 | 0.49 ~ 0.55 |
+
+结论跟直觉相反：**不会变均匀，反而在慢慢集中**。但收敛非常慢、波动也大——10 万轮那行 0.44 和 0.54 都跑出来过，单看一次结果说明不了问题。
+
+两处校验：把最终名单的 100 个数字用 O(n) 的排序公式 `Σ(2i − n − 1)·x_i / (n·Σx)` 独立重算了一遍，和程序输出完全一致；每轮结束时的总额也核对过，恒等于 10000。
+
 ## 踩坑记录（实测）
 
 | 现象 | 原因 | 修法 |
@@ -207,6 +251,7 @@ Cannot invoke "com.qianyu.testpizza.Pizza.showPizza()" because "<local3>" is nul
 | `类 Test02 是公共的, 应在名为 Test02.java 的文件中声明` | 文件名和 `public class` 的名字不一致 | 改文件名或改类名，两者必须相同 |
 | 60 分被判成"请重新考试" | 及格线写成 `num2 <= 6`，`60 / 10 = 6` 也满足 | 改成 `< 6`（边界差一个等号） |
 | 目录 `Test1` 但 `package com.qianyu.test1` | 包名大小写和目录名不一致 | 统一成小写 `test1` |
+| 基尼系数恒为 `0.0`，可明细一眼就很不均 | 分子写成 `ΣΣ(x_i − x_j)`，`i`、`j` 都遍历全集，正负严格抵消 | 改成 `ΣΣ\|x_i − x_j\|`；分母 `2 × 人数 × 总钱数` 本来就没问题 |
 
 最后一条来自 `oop/01-student/v1`：当时文件夹写成 `Test1`，包声明却是 `test1`。Windows 不区分大小写所以能编译，换到 Linux 上就找不到了。
 
@@ -239,11 +284,19 @@ javac -encoding UTF-8 -d out $(find src -name "*.java")
 java -cp out com.qianyu.testcollection04.TestMap
 ```
 
+**`algorithm/` 的练习**，`before/` 和 `after/` 分开编译，里面的类都在 `Test01` 包下：
+
+```bash
+cd algorithm/gini/after
+javac -encoding UTF-8 -d out TestJiNi.java
+java -cp out Test01.TestJiNi
+```
+
 用 IDEA 的话更省事：`File → Open` 选 `java-learning/javastudy/Test01`，等它建立索引，各模块的 `src` 已经配好，右键任意带 `main` 的类直接 Run。
 
 `-encoding UTF-8` 不能省，源码里有中文，Windows 默认编码不是 UTF-8 时会乱码或编译报错。
 
-注意 `before/` 里的文件是**故意留着编译不过的**，想跑请用 `after/`。
+注意 `before/` 里的文件并不都能跑：`basics/`、`oop/` 下那些是**故意留着编译不过的**；`algorithm/gini/before/` 是另一种情况——能编译、能跑完，只是算出来是错的（基尼系数恒为 0）。想跑请用 `after/`。
 
 ## 说明
 
@@ -251,6 +304,7 @@ java -cp out com.qianyu.testcollection04.TestMap
 - `notepad/` 和 `basics/` 里有同名文件（`Test05`、`Test07`、`Test11`、`Test12`、`Test19`），但**不是同一份**：Notepad++ 里是最初的版本，`basics/` 里是后来重新梳理或修改过的（比如 `Test05` 在 Notepad++ 里已经能编译，`basics/` 里反而是更早那次报错的；`Test19` 一个用 `println{...}` 一个用 `println(...)`）。两边都保留，正好能看出改动轨迹。
 - `04-method/v1` 和 `v2` 里都有 `Test12` 类，是同一道题的两次迭代，请**分开编译**，不要一次性 `javac` 整个 `basics/`。
 - `javastudy/Test01` 的 8 个模块里也有同名类（`com.qianyu.test1.Student` 在好几个模块出现），原因同上：**一个模块一次编译**，别把 `javastudy/` 整个丢给 `javac`。
+- `algorithm/gini` 的 `before/` 和 `after/` 都叫 `TestJiNi`、都在 `Test01` 包里，同样请**分开编译**；`after/` 是唯一改对的那版。
 - `out/`、`*.class`、`.idea/workspace.xml` 这类东西都在 `.gitignore` 里，不会进仓库；`.iml` 和 `.idea/{modules,encodings,misc}.xml` 是有意提交的，为了让工程 clone 下来就能打开。
 
 ## License
